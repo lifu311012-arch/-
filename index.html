@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今日運勢｜靈籤筒</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Noto Serif TC", "Songti TC", serif;
+  background:
+    radial-gradient(ellipse at center, #8c2520 0%, #48120f 75%);
+  color: #f8e8bd;
+  text-align: center;
+  padding: 35px 16px;
+}
+.container {
+  max-width: 480px;
+  margin: auto;
+  padding: 28px 20px;
+  border: 2px solid #c69a49;
+  border-radius: 12px;
+  background: rgba(40, 10, 8, .55);
+  box-shadow: 0 0 35px #160503;
+}
+h1 {
+  color: #eac77a;
+  letter-spacing: 8px;
+  font-size: 30px;
+  margin: 5px 0;
+}
+.subtitle {
+  color: #d9b77c;
+  letter-spacing: 4px;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+.date { color: #e4c88e; font-size: 14px; }
+.incense { font-size: 27px; margin: 15px; }
+
+.cylinder {
+  width: 180px;
+  height: 230px;
+  margin: 30px auto 20px;
+  position: relative;
+  background: linear-gradient(90deg,#641510,#b52c20,#741810);
+  border: 4px solid #d5aa54;
+  border-radius: 25px 25px 35px 35px;
+  box-shadow: inset 8px 0 12px #4a0c09,
+              inset -8px 0 12px #4a0c09,
+              0 12px 15px #1c0705;
+}
+.cylinder:before {
+  content: "靈籤";
+  position: absolute;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  font-size: 36px;
+  color: #f3d38c;
+  letter-spacing: 8px;
+}
+.cylinder:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 18px;
+  top: -9px;
+  left: -4px;
+  border: 4px solid #e2bc6a;
+  border-radius: 50%;
+  background: #861b16;
+}
+.stick {
+  position: absolute;
+  width: 9px;
+  height: 110px;
+  background: linear-gradient(90deg,#e8c77b,#fff0bd,#b88b3b);
+  top: -65px;
+  left: 90px;
+  border-radius: 5px;
+  opacity: 0;
+}
+.shaking { animation: shake .7s ease-in-out 2; }
+.shaking .stick { opacity: 1; }
+@keyframes shake {
+  0%,100% { transform: rotate(0); }
+  25% { transform: rotate(12deg); }
+  50% { transform: rotate(-12deg); }
+  75% { transform: rotate(8deg); }
+}
+button {
+  border: 1px solid #f2d28a;
+  border-radius: 30px;
+  padding: 14px 35px;
+  color: #5c1710;
+  background: linear-gradient(135deg,#f8e2a7,#c89b48);
+  font-size: 17px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px #210705;
+}
+button:hover { transform: translateY(-2px); }
+button:disabled { opacity: .6; cursor: wait; }
+
+.result {
+  display: none;
+  margin-top: 28px;
+  padding: 20px;
+  background: #f4e7c9;
+  color: #592019;
+  border: 3px double #b58a42;
+  border-radius: 5px;
+  animation: appear .8s ease;
+}
+@keyframes appear {
+  from { opacity:0; transform:translateY(15px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.result h2 { color: #9c271d; }
+.grade {
+  font-size: 27px;
+  color: #b32b1d;
+  font-weight: bold;
+  margin: 10px;
+}
+.poem {
+  font-size: 19px;
+  line-height: 2;
+  letter-spacing: 3px;
+  padding: 15px 0;
+  border-top: 1px solid #c6a66a;
+  border-bottom: 1px solid #c6a66a;
+}
+.detail {
+  text-align: left;
+  line-height: 1.9;
+  font-size: 14px;
+}
+.detail b { color: #9c271d; }
+.footer {
+  margin-top: 28px;
+  font-size: 12px;
+  color: #c6a66a;
+  line-height: 2;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="incense">☯ 🏮 ☯</div>
+  <h1>今日靈籤</h1>
+  <div class="subtitle">心誠則靈・一日一籤</div>
+  <div class="date" id="date"></div>
+
+  <div class="cylinder" id="cylinder">
+    <div class="stick"></div>
+  </div>
+
+  <p>靜心凝神，心中默念今日所求之事</p>
+  <button id="drawBtn" onclick="draw()">🎋 開始求籤</button>
+
+  <div class="result" id="result">
+    <h2>✦ 今日靈籤 ✦</h2>
+    <div id="number"></div>
+    <div class="grade" id="grade"></div>
+    <div class="poem" id="poem"></div>
+    <div class="detail">
+      <p><b>【整體運勢】</b><br><span id="overall"></span></p>
+      <p><b>【事業運】</b><br><span id="career"></span></p>
+      <p><b>【財運】</b><br><span id="money"></span></p>
+      <p><b>【感情運】</b><br><span id="love"></span></p>
+      <p><b>【健康運】</b><br><span id="health"></span></p>
+      <p><b>【今日指引】</b><br><span id="advice"></span></p>
+    </div>
+  </div>
+
+  <div class="footer">
+    一念善心・萬事吉祥<br>
+    本籤僅供娛樂與生活參考
+  </div>
+</div>
+
+<script>
+document.getElementById("date").textContent =
+  new Date().toLocaleDateString("zh-TW", {
+    year:"numeric", month:"long", day:"numeric",
+    weekday:"long"
+  });
+
+const grades = ["上上籤","上籤","中籤","下籤"];
+
+const poems = [
+["上上籤","雲開月出照人間","春風得意喜綿綿","凡事逢時皆順遂","貴人相助福無邊",
+"運勢亨通，今日適合積極行動，努力容易得到回報。","工作有突破機會，適合推動計畫。","正財穩定，有機會獲得額外收益。","感情融洽，單身者有機會遇見好緣分。","精神良好，保持規律作息。","把握機會，主動出擊。"],
+["上籤","青山綠水路迢迢","守得雲開見月明","莫問前程多遠近","貴人相伴自然成",
+"目前的努力正在累積成果，耐心等待便能看見收穫。","適合穩健執行，不宜操之過急。","小有進帳，避免衝動消費。","坦誠溝通能讓關係更進一步。","注意休息，避免過勞。","相信自己的節奏，持續前進。"],
+["中籤","平湖秋月映清光","凡事從容莫慌張","守得本心勤努力","自然福至滿庭芳",
+"今日運勢平穩，適合整理思緒、完成手邊工作。","按部就班，適合處理細節。","收支平衡，適合檢視預算。","多些理解，少些猜測。","注意飲食與睡眠。","穩定就是今日最大的優勢。"],
+["下籤","風雨行舟浪未平","暫停腳步莫爭先","待到雲消天色朗","自然一路得安寧",
+"今日宜守不宜攻，避免倉促決定，耐心能化解阻礙。","謹慎處理溝通，重要決策宜多確認。","避免高風險投資與非必要支出。","多傾聽對方想法，避免意氣用事。","留意身體訊號，適當休息。","放慢腳步，先把眼前事情做好。"]
+];
+
+function draw() {
+  const btn = document.getElementById("drawBtn");
+  const cylinder = document.getElementById("cylinder");
+  const result = document.getElementById("result");
+
+  btn.disabled = true;
+  btn.textContent = "籤筒搖動中...";
+  result.style.display = "none";
+  cylinder.classList.remove("shaking");
+  void cylinder.offsetWidth;
+  cylinder.classList.add("shaking");
+
+  setTimeout(() => {
+    const weights = [15,35,35,15];
+    let r = Math.random()*100;
+    let index = 0;
+    for(let i=0;i<weights.length;i++){
+      r -= weights[i];
+      if(r <= 0){ index=i; break; }
+    }
+
+    const p = poems[index];
+    const fields = ["overall","career","money","love","health","advice"];
+
+    document.getElementById("number").textContent =
+      "第 " + (Math.floor(Math.random()*50)+1) + " 籤";
+    document.getElementById("grade").textContent = p[0];
+    document.getElementById("poem").innerHTML =
+      p.slice(1,5).join("<br>");
+
+    fields.forEach((field,i) => {
+      document.getElementById(field).textContent = p[i+5];
+    });
+
+    result.style.display = "block";
+    btn.disabled = false;
+    btn.textContent = "🎋 再求一支籤";
+    cylinder.classList.remove("shaking");
+  },1500);
+}
+</script>
+</body>
+</html>
